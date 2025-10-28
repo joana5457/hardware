@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Repair Booking - hightech</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>.preview{max-width:240px;margin-bottom:10px}</style>
+</head>
+<body class="inner_page">
+  <div class="container">
+    <div class="titlepage text_align_left" style="margin-top:30px;"><h2>Book a Repair</h2><p>Submit a faulty machine with an image indicating the fault, preferred pickup & delivery times.</p></div>
+
+    <form id="repair-form" style="max-width:800px;margin-bottom:50px;">
+      <div class="form-group">
+        <label>Customer Name</label>
+        <input class="form-control" id="cust-name" required>
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input class="form-control" id="cust-phone" required>
+      </div>
+      <div class="form-group">
+        <label>Faulty Machine (upload image - show where fault is)</label>
+        <input type="file" accept="image/*" id="fault-img" class="form-control">
+        <img id="fault-preview" class="preview" src="" style="display:none;" />
+      </div>
+      <div class="form-group">
+        <label>Describe the fault & location on machine</label>
+        <textarea id="fault-desc" class="form-control" rows="4"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Preferred Pickup Date & Time</label>
+          <input type="datetime-local" id="pickup-dt" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Preferred Delivery Date & Time</label>
+          <input type="datetime-local" id="delivery-dt" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Additional Notes</label>
+        <textarea id="repair-notes" class="form-control" rows="3"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;"><button type="submit" class="read_more">Submit Request</button><button id="clear-form" type="button" class="read_more" style="background:#fff;color:#000;border:1px solid #ddd;">Clear</button></div>
+    </form>
+
+    <div><a href="dashboard.html" class="read_more">Open POS Dashboard</a> (view repair requests / orders)</div>
+  </div>
+
+  <script src="js/jquery.min.js"></script>
+  <script>
+    (function(){
+      function readImage(input, cb){
+        if(!input.files || !input.files[0]) return cb(null);
+        var reader = new FileReader();
+        reader.onload = function(e){ cb(e.target.result); };
+        reader.readAsDataURL(input.files[0]);
+      }
+
+      function loadRequests(){ try{ return JSON.parse(localStorage.getItem('hightech_repairs_v1')||'[]'); }catch(e){return[];} }
+      function saveRequests(list){ localStorage.setItem('hightech_repairs_v1', JSON.stringify(list)); }
+
+      $('#fault-img').on('change', function(){ readImage(this, function(data){ if(data){ $('#fault-preview').attr('src', data).show(); } else { $('#fault-preview').hide(); } }); });
+      $('#clear-form').on('click', function(){ $('#repair-form')[0].reset(); $('#fault-preview').hide(); });
+
+      $('#repair-form').on('submit', function(e){ e.preventDefault();
+        var req = {
+          id: 'R' + Date.now().toString(36),
+          name: $('#cust-name').val(),
+          phone: $('#cust-phone').val(),
+          image: $('#fault-preview').attr('src') || null,
+          desc: $('#fault-desc').val(),
+          pickup: $('#pickup-dt').val(),
+          delivery: $('#delivery-dt').val(),
+          notes: $('#repair-notes').val(),
+          createdAt: new Date().toISOString()
+        };
+        var list = loadRequests(); list.unshift(req); saveRequests(list);
+        alert('Repair request submitted. Reference ID: ' + req.id);
+        $('#repair-form')[0].reset(); $('#fault-preview').hide();
+      });
+    })();
+  </script>
+</body>
+</html>

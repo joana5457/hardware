@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>POS Dashboard - hightech</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>.orders-table tbody tr td{vertical-align:middle}</style>
+</head>
+<body class="inner_page">
+  <div class="container">
+    <div class="titlepage text_align_left" style="margin-top:30px;">
+      <h2>POS Dashboard</h2>
+      <p>List of recent orders. Click View to open printable receipts.</p>
+    </div>
+
+    <div id="dashboard-root">
+      <ul class="nav nav-tabs" id="posTabs" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="orders-tab" data-toggle="tab" href="#orders" role="tab">Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="repairs-tab" data-toggle="tab" href="#repairs" role="tab">Repairs</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="admissions-tab" data-toggle="tab" href="#admissions" role="tab">Admissions</a>
+        </li>
+      </ul>
+      <div class="tab-content" style="margin-top:16px;">
+        <div class="tab-pane fade show active" id="orders" role="tabpanel">
+          <table class="table orders-table">
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th><th>Actions</th></tr></thead>
+            <tbody id="orders-list"></tbody>
+          </table>
+        </div>
+        <div class="tab-pane fade" id="repairs" role="tabpanel">
+          <table class="table repairs-table">
+            <thead><tr><th>Ref ID</th><th>Customer</th><th>Phone</th><th>Pickup</th><th>Delivery</th><th>Actions</th></tr></thead>
+            <tbody id="repairs-list"></tbody>
+          </table>
+        </div>
+        <div class="tab-pane fade" id="admissions" role="tabpanel">
+          <table class="table admissions-table">
+            <thead><tr><th>Admission ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Course</th><th>Actions</th></tr></thead>
+            <tbody id="admissions-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Receipt - hightech</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .receipt { max-width:800px;margin:40px auto;padding:20px;background:#fff;border:1px solid #eee; }
+    .receipt h2{margin-bottom:10px}
+    .receipt .meta{margin-bottom:20px}
+    @media print { .no-print{display:none;} }
+  </style>
+</head>
+<body class="inner_page">
+  <div class="container">
+    <div class="receipt" id="receipt-root">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2>hightech - Receipt</h2>
+        <div class="no-print"><button id="print-btn" class="read_more">Print</button></div>
+      </div>
+      <div id="receipt-content">Loading...</div>
+    </div>
+  </div>
+
+  <script src="js/jquery.min.js"></script>
+  <script>
+    (function(){
+      function loadOrders(){ try{ return JSON.parse(localStorage.getItem('hightech_orders_v1')||'[]'); }catch(e){return[];} }
+      function findOrder(id){ return loadOrders().find(function(o){return o.id===id;}); }
+      function fmt(v){ return '$'+(v||0).toFixed(2); }
+
+      var params = new URLSearchParams(location.search);
+      var id = params.get('id');
+      var root = $('#receipt-content');
+      if(!id){ root.html('<p>No receipt id provided.</p>'); }
+      else{
+        var order = findOrder(id);
+        if(!order){ root.html('<p>Order not found.</p>'); }
+        else{
+          var html = '<div class="meta">'
+            + '<div><strong>Order ID:</strong> '+order.id+'</div>'
+            + '<div><strong>Date:</strong> '+new Date(order.createdAt).toLocaleString()+'</div>'
+            + '<div><strong>Customer:</strong> '+order.name+' | '+order.phone+'</div>'
+            + '<div><strong>Address:</strong> '+(order.address||'N/A')+'</div>'
+            + '</div>';
+          html += '<table class="table table-sm"><thead><tr><th>Item</th><th>Price</th><th>Qty</th><th>Subtotal</th></tr></thead><tbody>';
+          order.cart.forEach(function(i){ html += '<tr><td>'+i.title+'</td><td>'+fmt(i.price)+'</td><td>'+i.qty+'</td><td>'+fmt(i.price*i.qty)+'</td></tr>'; });
+          html += '</tbody></table>';
+          html += '<div style="text-align:right;font-weight:bold;">Total: '+fmt(order.total)+'</div>';
+          root.html(html);
+        }
+      }
+
+      $(document).on('click','#print-btn', function(){ window.print(); });
+    })();
+  </script>
+</body>
+</html>
